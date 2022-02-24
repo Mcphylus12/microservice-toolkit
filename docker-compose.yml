@@ -1,0 +1,47 @@
+version: '3.4'
+
+services:
+  demo-api:
+    build:
+      context: .
+      dockerfile: DemoApi/Dockerfile
+    ports:
+      - "8090:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    depends_on:
+      - rabbitmq
+  demo-worker:
+    build:
+      context: .
+      dockerfile: DemoWorker/Dockerfile
+    ports:
+      - "8091:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    depends_on:
+      - rabbitmq
+  #db:
+  #  user: root
+  #  image: "mcr.microsoft.com/mssql/server"
+  #  environment:
+  #      SA_PASSWORD: "Pass@Word1!"
+  #      ACCEPT_EULA: "Y"
+  #  volumes:
+  #    - sqlvolume:/var/opt/mssql
+  #  ports:
+  #    - "1433:1433"
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - rabbitdata:/var/lib/rabbitmq/
+        - rabbitlog:/var/log/rabbitmq
+volumes:
+  rabbitdata:
+  rabbitlog:
+  sqlvolume:

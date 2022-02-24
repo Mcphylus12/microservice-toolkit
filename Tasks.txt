@@ -1,0 +1,9 @@
+﻿- [✓] Source Generator (in branch) (reg done, resovler and handler manager still need doing)
+- [~] Better Config structure to avoid char replacements
+- [ ] Scope support on message handling
+- [ ] Logging format options
+- [ ] Config validation
+- [ ] Central Configuration
+- [ ] Metrics
+- [ ] Storage Demo
+- [ ] Cache Demo
