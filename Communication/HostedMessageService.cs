@@ -1,6 +1,4 @@
 ﻿using System.Text;
-using System.Text.Json;
-using Communication.Abstractions;
 using Communication.Abstractions.Registration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -8,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Monitoring.Abstractions;
 using Newtonsoft.Json;
 using Polly;
-using Polly.Retry;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -16,13 +13,13 @@ namespace Communication;
 
 internal class HostedMessageService : BackgroundService
 {
-    private readonly IOptions<CommunicationConfiguration> _options;
+    private readonly IOptions<InboundMessagingConfig> _options;
     private readonly IMonitor<HostedMessageService> _monitor;
     private readonly IResolver _resolver;
     private readonly List<Listener> _listeners;
 
     public HostedMessageService(
-        IOptions<CommunicationConfiguration> options,
+        IOptions<InboundMessagingConfig> options,
         IHostApplicationLifetime applicationLifetime,
         IMonitor<HostedMessageService> monitor,
         IResolver resolver)
@@ -41,15 +38,15 @@ internal class HostedMessageService : BackgroundService
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (_options.Value?.Inbound?.Endpoints is null)
+        if (_options.Value is null)
         {
             _monitor.LogWarning("No inbound endpoints were configured so the hosted service is stopping");
             return Task.CompletedTask;
         }
 
-        foreach (var endpointConfig in _options.Value.Inbound.Endpoints)
+        foreach (var endpointConfig in _options.Value)
         {
-            _listeners.Add(new Listener(endpointConfig.Key, _resolver, _monitor));
+            _listeners.Add(new Listener(endpointConfig, _resolver, _monitor));
         }
         return Task.CompletedTask;
     }
@@ -62,7 +59,7 @@ internal sealed class Listener : IDisposable
     private IModel? _channel;
     private readonly IMonitor<HostedMessageService> _monitor;
 
-    public Listener(string endpoint, IResolver resolver, IMonitor<HostedMessageService> monitor)
+    public Listener(MessageConfig endpoint, IResolver resolver, IMonitor<HostedMessageService> monitor)
     {
         Policy
             .Handle<Exception>()
@@ -70,9 +67,8 @@ internal sealed class Listener : IDisposable
             .Execute(() =>
             {
                 monitor.LogInformation("Trying to listen");
-                var parts = endpoint.Replace('#', ':').Split('~');
-                var host = parts[0];
-                var queueName = parts[1];
+                var host = endpoint.Host;
+                var queueName = endpoint.QueueName;
                 var factory = new ConnectionFactory() { HostName = host };
                 _connection = factory.CreateConnection();
                 _channel = _connection.CreateModel();

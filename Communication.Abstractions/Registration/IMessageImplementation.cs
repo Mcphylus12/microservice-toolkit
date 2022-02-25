@@ -2,5 +2,5 @@
 
 public interface IMessageImplementation
 {
-    Task SendMessage(string endpoint, IMessage message);
+    Task SendMessage(IMessage message);
 }

@@ -1,4 +1,4 @@
-﻿using Communication.Abstractions;
+﻿using Communication.Abstractions.Registration;
 using DemoShared;
 using Microsoft.AspNetCore.Mvc;
 using Monitoring.Abstractions;

@@ -1,4 +1,4 @@
-﻿using Communication.Abstractions;
+﻿using Communication.Abstractions.Registration;
 
 namespace DemoShared;
 

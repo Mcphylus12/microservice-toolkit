@@ -2,6 +2,6 @@
 
 public interface IRequestImplementation
 {
-    Task<TResponse> SendRequest<TResponse>(string endpoint, IRequest<TResponse> request);
-    Task SendRequest(string endpoint, IRequest request);
+    Task<TResponse> SendRequest<TResponse>(IRequest<TResponse> request);
+    Task SendRequest(IRequest request);
 }

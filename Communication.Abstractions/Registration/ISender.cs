@@ -1,4 +1,4 @@
-﻿namespace Communication.Abstractions;
+﻿namespace Communication.Abstractions.Registration;
 
 public interface ISender
 {

@@ -1,4 +1,6 @@
-﻿namespace Communication.Abstractions;
+﻿using Communication.Abstractions.Registration;
+
+namespace Communication.Abstractions;
 
 public interface IMessageHandler<in TMessage>
     where TMessage : IMessage

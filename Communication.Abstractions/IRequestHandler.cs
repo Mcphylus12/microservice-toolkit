@@ -1,4 +1,6 @@
-﻿namespace Communication.Abstractions;
+﻿using Communication.Abstractions.Registration;
+
+namespace Communication.Abstractions;
 
 public interface IRequestHandler<in TRequest>
     where TRequest : IRequest

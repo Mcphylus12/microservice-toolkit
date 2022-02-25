@@ -1,5 +1,5 @@
-﻿using Communication.Abstractions;
-using Communication.Abstractions.Registration;
+﻿using Communication.Abstractions.Registration;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System.Text;
@@ -8,12 +8,27 @@ namespace Communication;
 
 internal class RabbitMQImplementation : IMessageImplementation
 {
-    public Task SendMessage(string endpoint, IMessage message)
+    private readonly Dictionary<string, MessageConfig> _options;
+
+    public RabbitMQImplementation(IOptions<OutboundMessagingConfig> options)
     {
-        var parts = endpoint.Split('~');
-        var host = parts[0];
-        var queueName = parts[1];
-        var routingKey = parts[2];
+        _options = new Dictionary<string, MessageConfig>();
+
+        foreach (var endpoint in options.Value)
+        {
+            foreach (var message in endpoint.Messages)
+            {
+                _options.Add(message, endpoint.Endpoint);
+            }
+        }
+    }
+
+    public Task SendMessage(IMessage message)
+    {
+        var endpoint = _options[message.GetType().Name];
+        var host = endpoint.Host;
+        var queueName = endpoint.QueueName;
+        var routingKey = endpoint.RoutingKey;
         var factory = new ConnectionFactory() { HostName = host };
         using (var connection = factory.CreateConnection())
         using (var channel = connection.CreateModel())

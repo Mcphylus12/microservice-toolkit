@@ -1,24 +1,34 @@
-﻿using Communication.Abstractions;
+﻿using System.Text;
 using Communication.Abstractions.Registration;
-using Microsoft.Extensions.Logging;
-using Monitoring.Abstractions;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Text;
 
 namespace Communication;
 
 internal class HttpImplementation : IRequestImplementation
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly Dictionary<string, string> _options;
 
-    public HttpImplementation(IHttpClientFactory httpClientFactory)
+    public HttpImplementation(
+        IHttpClientFactory httpClientFactory,
+        IOptions<OutboundRequestConfig> options)
     {
         _httpClientFactory = httpClientFactory;
+        _options = new Dictionary<string, string>();
+
+        foreach (var endpoint in options.Value)
+        {
+            foreach (var request in endpoint.Requests)
+            {
+                _options.Add(request, endpoint.Endpoint);
+            }
+        }
     }
 
-    public async Task<TResponse> SendRequest<TResponse>(string endpoint, IRequest<TResponse> request)
+    public async Task<TResponse> SendRequest<TResponse>(IRequest<TResponse> request)
     {
-        var response = await PostRequest(endpoint, request);
+        var response = await PostRequest(request);
 
         try
         {
@@ -32,12 +42,13 @@ internal class HttpImplementation : IRequestImplementation
         }
     }
 
-    public Task SendRequest(string endpoint, IRequest request) => PostRequest(endpoint, request);
+    public Task SendRequest(IRequest request) => PostRequest(request);
 
-    private async Task<HttpResponseMessage> PostRequest(string endpoint, IRequest request)
+    private async Task<HttpResponseMessage> PostRequest(IRequest request)
     {
         try
         {
+            var endpoint = _options[request.GetType().Name];
             var client = _httpClientFactory.CreateClient();
             var content = JsonConvert.SerializeObject(request);
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, endpoint)

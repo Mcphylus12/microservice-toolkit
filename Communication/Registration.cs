@@ -13,7 +13,10 @@ public static class Registration
         services.AddHttpClient();
         services.AddTransient<IMessageImplementation, RabbitMQImplementation>();
         services.AddTransient<IRequestImplementation, HttpImplementation>();
-        services.ConfigureOptions<ConfigurationBinder>();
+        services.AddTransient<ISender, Sender>();
+        services.ConfigureOptions<InboundMessagingConfigurationBinder>();
+        services.ConfigureOptions<OutboundMessagingConfigurationBinder>();
+        services.ConfigureOptions<OutboundRequestConfigurationBinder>();
     }
 
     public static void HandleMessages(this IServiceCollection services)
