@@ -40,20 +40,20 @@ namespace Communications.CodeGeneration
                 serviceTypes.Add((serviceType, concreteName, request, interfacee.TypeArguments.Length > 1));
             }
 
-            var switchBody = serviceTypes.Select(s =>
+            var dicionarySetup = serviceTypes.Select(s =>
             {
                 var responseReturn = s.hasResponse ? "return " : string.Empty;
                 var nullReturn = !s.hasResponse ? "return null;" : string.Empty;
 
                 return
 $@"
-            case ""{s.requestType.Name}"":
-                {{
-                    var service = ActivatorUtilities.CreateInstance<{s.concreteType}>(_serviceProvider);
-                    var request = await deserialiseType(typeof({s.requestType.ToDisplayString()}));
-                    {responseReturn}await service.HandleAsync(({s.requestType.ToDisplayString()})request);
-                    {nullReturn}
-                }}
+        _handlers[""{s.requestType.Name}""] = async deserialise =>
+        {{
+            var service = ActivatorUtilities.CreateInstance<{s.concreteType}>(serviceProvider);
+            var request = await deserialise(typeof({s.requestType.ToDisplayString()}));
+            {responseReturn}await service.HandleAsync(({s.requestType.ToDisplayString()})request);
+            {nullReturn}
+        }};
 ";
             });
 
@@ -76,20 +76,24 @@ public static class HandlerRegistration
 
 public class Resolver : IResolver
 {{
-    private readonly IServiceProvider _serviceProvider;
+    private delegate Task<object?> Handle(IResolver.Deserialise deserialise);
+    private readonly Dictionary<string, Handle> _handlers;
 
     public Resolver(IServiceProvider serviceProvider)
     {{
-        _serviceProvider = serviceProvider;
+        _handlers = new Dictionary<string, Handle>();
+
+        {string.Join("\n", dicionarySetup)}
     }}
 
-    public async Task<object?> Resolve(string messageType, Func<Type, Task<object>> deserialiseType)
+    public Task<object?> Resolve(string messageType, IResolver.Deserialise deserialiseType)
     {{
-        switch (messageType)
+        if (_handlers.TryGetValue(messageType, out var handler))
         {{
-            {string.Join("\n\t\t\t", switchBody)}
-            default: throw new NotSupportedException();
+            return handler(deserialiseType);
         }}
+
+        throw new NotSupportedException();
     }}
 }}
 ");

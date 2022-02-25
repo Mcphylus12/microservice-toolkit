@@ -2,5 +2,6 @@
 
 public interface IResolver
 {
-    Task<object?> Resolve(string messageType, Func<Type, Task<object>> deserialiseType);
+    public delegate Task<object> Deserialise(Type type);
+    Task<object?> Resolve(string messageType, Deserialise deserialiseType);
 }
