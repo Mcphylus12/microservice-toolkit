@@ -30,7 +30,11 @@ internal class RequestMiddleware : IMiddleware
         }
 
         var messageType = context.Request.Headers["X-Request-Type"];
-
+        using var scope = _monitor.BeginScope(new Dictionary<string, object>
+        {
+            ["RequestHandlingId"] = Guid.NewGuid(),
+            ["MessageType"] = messageType.Single()
+        });
         var response = await _requestResolver.Resolve(messageType, async type =>
         {
             var request = await context.Request.ReadFromJsonAsync(type);

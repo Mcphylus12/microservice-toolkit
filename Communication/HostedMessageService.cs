@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Communication.Abstractions.Registration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -15,18 +16,18 @@ internal class HostedMessageService : BackgroundService
 {
     private readonly IOptions<InboundMessagingConfig> _options;
     private readonly IMonitor<HostedMessageService> _monitor;
-    private readonly IResolver _resolver;
+    private readonly IServiceProvider _serviceProvider;
     private readonly List<Listener> _listeners;
 
     public HostedMessageService(
         IOptions<InboundMessagingConfig> options,
         IHostApplicationLifetime applicationLifetime,
         IMonitor<HostedMessageService> monitor,
-        IResolver resolver)
+        IServiceProvider serviceProvider)
     {
         _options = options;
         _monitor = monitor;
-        _resolver = resolver;
+        _serviceProvider = serviceProvider;
         _listeners = new List<Listener>();
         applicationLifetime.ApplicationStopping.Register(ApplicationStopping);
     }
@@ -46,7 +47,7 @@ internal class HostedMessageService : BackgroundService
 
         foreach (var endpointConfig in _options.Value)
         {
-            _listeners.Add(new Listener(endpointConfig, _resolver, _monitor));
+            _listeners.Add(new Listener(endpointConfig, _monitor, _serviceProvider));
         }
         return Task.CompletedTask;
     }
@@ -54,12 +55,12 @@ internal class HostedMessageService : BackgroundService
 
 internal sealed class Listener : IDisposable
 {
-    private IResolver? _resolver;
     private IConnection? _connection;
     private IModel? _channel;
     private readonly IMonitor<HostedMessageService> _monitor;
+    private readonly IServiceProvider _serviceProvider;
 
-    public Listener(MessageConfig endpoint, IResolver resolver, IMonitor<HostedMessageService> monitor)
+    public Listener(MessageConfig endpoint, IMonitor<HostedMessageService> monitor, IServiceProvider serviceProvider)
     {
         Policy
             .Handle<Exception>()
@@ -83,19 +84,27 @@ internal sealed class Listener : IDisposable
                 _channel.BasicConsume(queue: queueName,
                                         autoAck: true,
                                         consumer: consumer);
-                _resolver = resolver;
                 monitor.LogInformation("Started Listening");
             });
-        this._monitor = monitor;
+        _monitor = monitor;
+        _serviceProvider = serviceProvider;
     }
 
     private void ProcessMessage(object? sender, BasicDeliverEventArgs e)
     {
+
         try
         {
             _monitor.LogDebug("Message Received");
             var messageType = Encoding.UTF8.GetString((byte[])e.BasicProperties.Headers["X-Message-Type"]);
-            _resolver!.Resolve(messageType, type =>
+            using var scope = _monitor.BeginScope(new Dictionary<string, object>
+            {
+                ["MessageHandlingId"] = Guid.NewGuid(),
+                ["MessageType"] = messageType
+            });
+            using var providerScope = _serviceProvider.CreateScope();
+            var reesolver = providerScope.ServiceProvider.GetRequiredService<IResolver>();
+            reesolver!.Resolve(messageType, type =>
                 {
                     var result = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(e.Body.ToArray()), type);
                     if (result is null) throw new JsonSerializationException();
