@@ -21,7 +21,7 @@ public static class Registration
 
         config = format switch
         {
-            ConsoleFormat.Console => config.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{Properties:j}{Exception}"),
+            ConsoleFormat.Console => config.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Properties:j}{NewLine}{Exception}"),
             ConsoleFormat.Json => config.WriteTo.Console(formatter: new JsonFormatter(renderMessage: true)),
             _ => throw new NotSupportedException("Console Format not supported")
         };
