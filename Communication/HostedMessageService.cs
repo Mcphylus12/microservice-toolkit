@@ -60,7 +60,7 @@ internal sealed class Listener : IDisposable
     private readonly IMonitor<HostedMessageService> _monitor;
     private readonly IServiceProvider _serviceProvider;
 
-    public Listener(MessageConfig endpoint, IMonitor<HostedMessageService> monitor, IServiceProvider serviceProvider)
+    public Listener(MessageEndpointConfig endpoint, IMonitor<HostedMessageService> monitor, IServiceProvider serviceProvider)
     {
         Policy
             .Handle<Exception>()

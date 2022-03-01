@@ -2,7 +2,7 @@
 - [✓] Better Config structure to avoid char replacements
 - [✓] Scope support (service on message handling and logging on both)
 - [✓] Logging format options
-- [ ] Config validation
+- [✓] Config validation
 - [ ] Central Configuration
 - [ ] Metrics
 - [ ] Storage Demo

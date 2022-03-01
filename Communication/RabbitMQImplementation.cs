@@ -8,11 +8,11 @@ namespace Communication;
 
 internal class RabbitMQImplementation : IMessageImplementation
 {
-    private readonly Dictionary<string, MessageConfig> _options;
+    private readonly Dictionary<string, MessageEndpointConfig> _options;
 
     public RabbitMQImplementation(IOptions<OutboundMessagingConfig> options)
     {
-        _options = new Dictionary<string, MessageConfig>();
+        _options = new Dictionary<string, MessageEndpointConfig>();
 
         foreach (var endpoint in options.Value)
         {
