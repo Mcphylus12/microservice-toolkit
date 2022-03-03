@@ -1,0 +1,18 @@
+{
+  "OutboundMessages": [
+    {
+      "Endpoint": {
+        "QueueName": "demo",
+        "Host": "rabbitmq",
+        "RoutingKey": "demo"
+      },
+      "Messages": [ "DemoMessage" ]
+    }
+  ],
+  "OutboundRequests": [
+    {
+      "Endpoint": "http://demo-worker",
+      "Requests": [ "DemoRequest" ]
+    }
+  ]
+}

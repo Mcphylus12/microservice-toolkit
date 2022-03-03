@@ -1,0 +1,9 @@
+{
+  "InboundMessages": [
+    {
+      "QueueName": "demo",
+      "Host": "rabbitmq",
+      "RoutingKey": "demo"
+    }
+  ]
+}

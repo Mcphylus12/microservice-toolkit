@@ -1,6 +1,17 @@
 version: '3.4'
 
 services:
+  demo-config:
+    build:
+      context: .
+      dockerfile: DemoConfigurationApi/Dockerfile
+    ports:
+      - "8092:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    depends_on:
+      - rabbitmq
   demo-api:
     build:
       context: .
