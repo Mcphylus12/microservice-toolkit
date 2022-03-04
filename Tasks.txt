@@ -3,7 +3,7 @@
 - [✓] Scope support (service on message handling and logging on both)
 - [✓] Logging format options
 - [✓] Config validation
-- [ ] Central Configuration
+- [✓] Central Configuration
 - [ ] Metrics
 - [ ] Storage Demo
 - [ ] Cache Demo

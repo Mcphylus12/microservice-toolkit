@@ -23,6 +23,7 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\Communication\Communication.csproj" />
+    <ProjectReference Include="..\Configuration\Configuration.csproj" />
     <ProjectReference Include="..\DemoShared\DemoShared.csproj" />
     <ProjectReference Include="..\Monitoring\Monitoring.csproj" />
   </ItemGroup>
