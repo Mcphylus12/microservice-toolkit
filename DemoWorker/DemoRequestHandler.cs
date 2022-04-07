@@ -1,6 +1,7 @@
 ﻿using Communication.Abstractions;
 using DemoShared;
 using Monitoring.Abstractions;
+using Monitoring.Abstractions.Extensions;
 
 namespace DemoWorker;
 
@@ -13,9 +14,12 @@ public class DemoRequestHandler : IRequestHandler<DemoRequest, DemoResponse>
         this._monitor = monitor;
     }
 
-    public Task<DemoResponse> HandleAsync(DemoRequest request, CancellationToken cancellationToken = default)
+    public async Task<DemoResponse> HandleAsync(DemoRequest request, CancellationToken cancellationToken = default)
     {
+        using var operation = _monitor.StartOperation("demo_request_handler");
         _monitor.LogInformation("Request Handled with value: {value}", request.Value);
-        return Task.FromResult(new DemoResponse(request.Value));
+        await Task.Delay(1000);
+        operation.Succeed();
+        return new DemoResponse(request.Value);
     }
 }

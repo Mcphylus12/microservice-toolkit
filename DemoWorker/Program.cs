@@ -2,6 +2,7 @@
 using Configuration;
 using DemoWorker;
 
+Monitoring.Registration.StartMetrics(3000);
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddApiSource();
@@ -14,3 +15,4 @@ var app = builder.Build();
 app.HandleRequests();
 
 app.Run();
+

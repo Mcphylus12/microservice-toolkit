@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Communication.Abstractions\Communication.Abstractions.csproj" />
+    <ProjectReference Include="..\Configuration\Configuration.csproj" />
   </ItemGroup>
 
 </Project>

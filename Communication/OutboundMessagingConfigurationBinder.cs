@@ -10,8 +10,8 @@ public class OutboundMessagingConfig : List<OutboundMessagingConfig.OutboundEndp
 
     public class OutboundEndpointConfig
     {
-        public MessageEndpointConfig Endpoint { get; set; }
-        public IList<string> Messages { get; set; }
+        public MessageEndpointConfig Endpoint { get; set; } = null!;
+        public IList<string> Messages { get; set; } = null!;
     }
 }
 

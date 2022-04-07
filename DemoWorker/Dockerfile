@@ -42,5 +42,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
+EXPOSE 3000
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "DemoWorker.dll"]

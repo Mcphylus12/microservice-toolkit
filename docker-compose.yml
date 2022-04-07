@@ -29,6 +29,7 @@ services:
       dockerfile: DemoWorker/Dockerfile
     ports:
       - "8091:80"
+      - "8391:3000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80

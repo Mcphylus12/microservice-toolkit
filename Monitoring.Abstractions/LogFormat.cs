@@ -1,5 +1,5 @@
 ﻿namespace Monitoring.Abstractions;
-public enum ConsoleFormat
+public enum LogFormat
 {
     Console,
     Json

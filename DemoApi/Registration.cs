@@ -8,7 +8,7 @@ internal static class Registration
 {
     internal static void RegisterServices(this IServiceCollection services)
     {
-        services.RegisterMonitoring(ConsoleFormat.Console);
+        services.RegisterMonitoring(LogFormat.Console);
         services.RegisterCommunication();
     }
 }

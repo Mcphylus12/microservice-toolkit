@@ -5,5 +5,10 @@
       "Host": "rabbitmq",
       "RoutingKey": "demo"
     }
-  ]
-}
+  ],
+  "Monitoring": {
+    "HistogramBins": {
+      "demo_request_handler": [100, 500, 1000, 1500, 2500, 5000]
+    }
+  }
+} 

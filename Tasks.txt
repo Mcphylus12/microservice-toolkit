@@ -4,6 +4,8 @@
 - [✓] Logging format options
 - [✓] Config validation
 - [✓] Central Configuration
-- [ ] Metrics
+- [✓] Metrics
 - [ ] Storage Demo
 - [ ] Cache Demo
+- [ ] Health Checks
+- [ ] Registration to startup rename
