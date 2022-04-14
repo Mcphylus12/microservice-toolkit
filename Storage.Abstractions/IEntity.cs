@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Storage.Abstractions;
 
-internal interface IEntity
+public interface IEntity
 {
+    public Guid Id { get; set; }
 }
