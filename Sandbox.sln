@@ -29,6 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		docker-compose.yml = docker-compose.yml
+		README.md = README.md
 		Tasks.txt = Tasks.txt
 	EndProjectSection
 EndProject
@@ -38,7 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DemoConfigurationApi", "Dem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration", "Configuration\Configuration.csproj", "{96EDE1DD-841C-4791-A75D-016E023B965F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caching.InMemory", "Caching.InMemory\Caching.InMemory.csproj", "{28A3F846-BAB7-44DD-9562-3BA64330438A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caching.InMemory", "Caching.InMemory\Caching.InMemory.csproj", "{28A3F846-BAB7-44DD-9562-3BA64330438A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
