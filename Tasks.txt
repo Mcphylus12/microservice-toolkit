@@ -5,7 +5,6 @@
 - [✓] Config validation
 - [✓] Central Configuration
 - [✓] Metrics
-- [ ] Storage Demo
-- [ ] Cache Demo
+- [-] Cache Demos
 - [ ] Health Checks
-- [ ] Registration to startup rename
+- [ ] Registration to startup renamess
